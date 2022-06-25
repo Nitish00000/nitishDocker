@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using DataAccessLayer;
+
+namespace HotelMgmt
+{
+    internal class Program
+    {
+
+        public static void Main(string[] args)
+        {
+            Reservation reservation = new Reservation();
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("---------Welcome to the  hotel --------");
+                    Console.WriteLine("Enter your choice");
+                    Console.WriteLine("1. Make a New booking");
+                    Console.WriteLine("2.Booking Details based on a date");
+                    Console.WriteLine("3.Exit");
+                    int choice = Convert.ToInt32(Console.ReadLine());
+                    switch (choice)
+                    {
+                        case 1:
+                            NewBooking(reservation);
+                            break;
+                        case 2:
+                            SearchByDate(reservation);
+                            break;
+                        default:
+                            Environment.Exit(0);
+                            break;
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            }
+
+        }
+        private static void NewBooking(Reservation reservation)
+        {
+            Console.WriteLine("Make a New Booking");
+            Console.WriteLine("Please Enter the following Details");
+            Console.WriteLine("Enter the Customer id");
+            int cus_id = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter the Date on which you want to check in (mm/dd/yyyy format)");
+            DateTime check_in = Convert.ToDateTime(Console.ReadLine());
+            Console.WriteLine("Enter the Date on which you want to check out (mm/dd/yyyy format)");
+            DateTime check_out = Convert.ToDateTime(Console.ReadLine());
+            var reservationDetail = Reservation.CheckRoomAvailablity(cus_id, check_in, check_out);
+            if (reservationDetail != null)
+            {
+                if (reservation.DisplayandAddBookingDetails(reservationDetail))
+                {
+                    Console.WriteLine("Your Booking Details are:");
+                    Console.WriteLine("Room Number:" + reservationDetail.RoomNumber);
+                    Console.WriteLine("Check In Date:" + Convert.ToDateTime(reservationDetail.CheckinDate).Date.ToString("MM/dd/yyyy"));
+                    Console.WriteLine("Check Out Date:" + Convert.ToDateTime(reservationDetail.CheckoutDate).Date.ToString("MM/dd/yyyy"));
+                    Console.WriteLine("The number of days for your saty :" + reservationDetail.StayDuration);
+                    Console.WriteLine("Total Charges:" + reservationDetail.TotalCharge);
+                    Console.WriteLine("Room Booking Successful");
+                }
+                else
+                    Console.WriteLine("No rooms available for the selected dates. Please try with another set of dates");
+
+            }
+        }
+        private static void SearchByDate(Reservation reservation)
+        {
+            Console.WriteLine("Enter the Date to View the room bookings (mm/dd/yyyy):");
+            DateTime searchDate = Convert.ToDateTime(Console.ReadLine());
+            Reservation.SearchByDate(searchDate);
+        }
+
+
+
+
+    }
+}
